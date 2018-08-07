@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
+    "graphene_django",
+    "cask.accounts",
     "cask.cask",
     "cask.world",
     "cask.spirits",
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "cask.accounts.middleware.JWSTokenAuthenticationMiddleware",
 ]
 
 ROOT_URLCONF = "cask.urls"
@@ -117,3 +120,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = "/static/"
+
+GRAPHENE = {"SCHEMA": "cask.schema.schema"}

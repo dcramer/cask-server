@@ -10,15 +10,11 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("spirits", "0001_initial"),
-        ("world", "0001_initial"),
-    ]
+    dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]
 
     operations = [
         migrations.CreateModel(
-            name="CheckIn",
+            name="Follower",
             fields=[
                 (
                     "id",
@@ -29,36 +25,26 @@ class Migration(migrations.Migration):
                         serialize=False,
                     ),
                 ),
-                ("notes", models.TextField(null=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 (
-                    "bottle",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="spirits.Bottle"
-                    ),
-                ),
-                (
-                    "created_by",
+                    "from_user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
+                        related_name="following",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
-                ("flavor_profiles", models.ManyToManyField(to="spirits.FlavorProfile")),
                 (
-                    "friends",
-                    models.ManyToManyField(
-                        related_name="friend_checkins", to=settings.AUTH_USER_MODEL
-                    ),
-                ),
-                (
-                    "location",
+                    "to_user",
                     models.ForeignKey(
-                        null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="world.Location",
+                        related_name="followers",
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],
-        )
+        ),
+        migrations.AlterUniqueTogether(
+            name="follower", unique_together={("from_user", "to_user")}
+        ),
     ]

@@ -1,7 +1,9 @@
 from django.db import models
+from uuid import uuid4
 
 
 class Country(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=128, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -10,6 +12,7 @@ class Country(models.Model):
 
 
 class City(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=128, unique=True)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -19,6 +22,7 @@ class City(models.Model):
 
 
 class Region(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=128)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -31,6 +35,7 @@ class Region(models.Model):
 
 
 class Location(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=128)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
