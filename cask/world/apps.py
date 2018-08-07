@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class AppConfig(AppConfig):
-    name = "cask"
+    name = "cask.world"
