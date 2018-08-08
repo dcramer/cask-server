@@ -1,21 +1,32 @@
 import django_filters
 import graphene
 
-from django.contrib.auth.models import User
 from graphene import relay, ObjectType, Field
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 
-from .models import Follower
+from .models import Follower, User
 
 
 class UserNode(DjangoObjectType):
     full_name = graphene.String()
+    email = graphene.String(required=False)
 
     class Meta:
         model = User
-        only_fields = ("id", "username", "first_name", "last_name")
+        only_fields = ("id", "email", "first_name", "last_name")
         interfaces = (relay.Node,)
+
+    def resolve_full_name(self, info):
+        if self.first_name and self.last_name:
+            return "{} {}".format(self.first_name, self.last_name)
+        return self.first_name
+
+    def resolve_email(self, info):
+        user = info.context.user
+        if user.is_authenticated and user.id == self.id:
+            return self.email
+        return None
 
 
 class UserQuery(object):
@@ -44,7 +55,7 @@ class FollowerFilter(django_filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ("id", "username", "first_name", "last_name")
+        fields = ("id", "email", "first_name", "last_name")
 
     @property
     def qs(self):
@@ -67,7 +78,7 @@ class FollowingFilter(django_filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ("id", "username", "first_name", "last_name")
+        fields = ("id", "email", "first_name", "last_name")
 
     @property
     def qs(self):

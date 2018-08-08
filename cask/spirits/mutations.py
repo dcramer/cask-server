@@ -1,6 +1,9 @@
 import graphene
 
 from django.db import IntegrityError
+from graphql_relay.node.node import from_global_id
+
+from cask.world.models import Region
 
 from .models import Bottle, Brand, Distillery
 from .schema import BottleNode, BrandNode, DistilleryNode
@@ -9,9 +12,9 @@ from .schema import BottleNode, BrandNode, DistilleryNode
 class AddBottle(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        brand = graphene.String(required=True)
-        distillery = graphene.String(required=True)
-        spirit_type = graphene.String(required=False)
+        brand = graphene.ID(required=True)
+        distillery = graphene.ID(required=True)
+        spirit_type = graphene.ID(required=False)
         abv = graphene.Float(required=False)
         age = graphene.Int(required=False)
 
@@ -29,6 +32,9 @@ class AddBottle(graphene.Mutation):
         abv: float = None,
         age: int = None,
     ):
+        if not info.context.user.is_authenticated:
+            return AddDistillery(ok=False, errors=["Authentication required"])
+
         bottle = Bottle.objects.create(
             name=name,
             distillery=distillery,
@@ -49,6 +55,9 @@ class AddBrand(graphene.Mutation):
     brand = graphene.Field(BrandNode)
 
     def mutate(self, info, name: str = None, country: str = None, region: str = None):
+        if not info.context.user.is_authenticated:
+            return AddDistillery(ok=False, errors=["Authentication required"])
+
         try:
             result = Brand.objects.create(name=name, created_by=info.context.user)
         except IntegrityError:
@@ -59,17 +68,25 @@ class AddBrand(graphene.Mutation):
 class AddDistillery(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        country = graphene.String(required=True)
-        region = graphene.String(required=True)
+        region = graphene.ID(required=True)
 
     ok = graphene.Boolean()
     errors = graphene.List(graphene.String)
     distillery = graphene.Field(DistilleryNode)
 
-    def mutate(self, info, name: str = None, country: str = None, region: str = None):
+    def mutate(self, info, name: str = None, region: str = None):
+        if not info.context.user.is_authenticated:
+            return AddDistillery(ok=False, errors=["Authentication required"])
+
+        region = from_global_id(region)[1]
+        region = Region.objects.get(id=region)
+
         try:
             result = Distillery.objects.create(
-                name=name, country=country, region=region, created_by=info.context.user
+                name=name,
+                country_id=region.country_id,
+                region=region,
+                created_by=info.context.user,
             )
         except IntegrityError:
             return AddDistillery(ok=False, errors=["Distillery already exists."])

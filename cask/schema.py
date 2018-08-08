@@ -7,9 +7,6 @@ import cask.spirits.mutations
 import cask.spirits.schema
 import cask.world.schema
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from graphene_django.views import GraphQLView
-
 
 class RootQuery(
     cask.accounts.schema.Query,
@@ -22,10 +19,6 @@ class RootQuery(
 
 
 class RootMutation(cask.accounts.mutations.Mutation, cask.spirits.mutations.Mutation):
-    pass
-
-
-class AuthenticatedGraphQLView(LoginRequiredMixin, GraphQLView):
     pass
 
 

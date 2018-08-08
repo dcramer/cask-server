@@ -20,9 +20,10 @@ class Login(graphene.Mutation):
     token = graphene.String()
     user = graphene.Field(UserNode)
 
-    @staticmethod
-    def mutate(info, email: str, password: str):
-        user = authenticate(username=email, password=password)
+    def mutate(self, info, email: str, password: str):
+        user = authenticate(email=email, password=password)
+        # we stuff the user into the current request so they can serialize sensitive attributes
+        info.context.user = user
         if user is None:
             return Login(
                 ok=False,

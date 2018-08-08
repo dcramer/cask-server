@@ -1,5 +1,7 @@
 from django.utils.functional import SimpleLazyObject
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
+
+from cask.accounts.models import User
 
 from .utils import BadSignature, parse_token
 
@@ -16,7 +18,7 @@ def get_user(header):
 
     try:
         return User.objects.get(id=payload["uid"])
-    except (KeyError, User.DoesNotExist):
+    except (TypeError, KeyError, User.DoesNotExist):
         return AnonymousUser()
 
 
