@@ -48,9 +48,16 @@ class Follower(models.Model):
         unique_together = (("from_user", "to_user"),)
 
 
-class User(AbstractUser):
-    """User model."""
+class Identity(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    provider = models.CharField(max_length=32)
+    external_id = models.CharField(max_length=32)
 
+    class Meta:
+        unique_together = (("provider", "external_id"),)
+
+
+class User(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
 

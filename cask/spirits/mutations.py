@@ -78,8 +78,7 @@ class AddDistillery(graphene.Mutation):
         if not info.context.user.is_authenticated:
             return AddDistillery(ok=False, errors=["Authentication required"])
 
-        region = from_global_id(region)[1]
-        region = Region.objects.get(id=region)
+        region = Region.objects.get(id=from_global_id(region)[1])
 
         try:
             result = Distillery.objects.create(

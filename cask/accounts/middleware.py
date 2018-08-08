@@ -3,7 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 
 from cask.accounts.models import User
 
-from .utils import BadSignature, parse_token
+from .utils import parse_token, security_hash
 
 
 def get_user(header):
@@ -11,15 +11,19 @@ def get_user(header):
         return AnonymousUser()
 
     token = header.split(" ", 1)[1]
-    try:
-        payload = parse_token(token)
-    except BadSignature:
+    payload = parse_token(token)
+    if not payload:
         return AnonymousUser()
 
     try:
-        return User.objects.get(id=payload["uid"])
+        user = User.objects.get(id=payload["uid"])
     except (TypeError, KeyError, User.DoesNotExist):
         return AnonymousUser()
+
+    if security_hash(user) != payload["sh"]:
+        return AnonymousUser()
+
+    return user
 
 
 class JWSTokenAuthenticationMiddleware(object):
