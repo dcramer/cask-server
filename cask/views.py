@@ -1,3 +1,4 @@
+import sentry_sdk
 import traceback
 
 from django.conf import settings
@@ -72,6 +73,7 @@ def format_located_error(error):
 class EnhancedGraphQLView(GraphQLView):
     @staticmethod
     def format_error(error):
+        sentry_sdk.capture_exception(error)
         try:
             if isinstance(error, GraphQLLocatedError):
                 return format_located_error(error)
