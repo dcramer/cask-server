@@ -3,6 +3,7 @@ import graphene
 import cask.accounts.mutations
 import cask.accounts.schema
 import cask.cask.schema
+import cask.cask.mutations
 import cask.spirits.mutations
 import cask.spirits.schema
 import cask.world.schema
@@ -18,7 +19,11 @@ class RootQuery(
     pass
 
 
-class RootMutation(cask.accounts.mutations.Mutation, cask.spirits.mutations.Mutation):
+class RootMutation(
+    cask.accounts.mutations.Mutation,
+    cask.cask.mutations.Mutation,
+    cask.spirits.mutations.Mutation,
+):
     pass
 
 
