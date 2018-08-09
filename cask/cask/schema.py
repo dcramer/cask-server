@@ -19,7 +19,7 @@ class ScopeFilter(django_filters.ChoiceFilter):
         # there's not yet privacy scope
         elif value == "public":
             pass
-        else:
+        elif value:
             raise NotImplementedError
         return qs
 

@@ -14,9 +14,12 @@ class EnhancedGraphQLView(GraphQLView):
         result = super().execute_graphql_request(*args, **kwargs)
         if result.errors:
             for error in result.errors:
-                try:
-                    raise error.original_error
-                except Exception as e:
-                    logger.exception(e)
-                    sentry_sdk.capture_exception(e)
+                if hasattr(error, "original_error"):
+                    try:
+                        raise error.original_error
+                    except Exception as e:
+                        logger.exception(e)
+                        sentry_sdk.capture_exception(e)
+                else:
+                    logger.error(error)
         return result
