@@ -59,9 +59,18 @@ class Identity(models.Model):
 
 class User(AbstractUser):
     username = None
+    first_name = None
+    last_name = None
+    name = models.CharField(max_length=128, null=True)
     email = models.EmailField(_("email address"), unique=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    def get_full_name(self):
+        return self.name
+
+    def get_short_name(self):
+        return self.name
