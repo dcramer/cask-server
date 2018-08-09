@@ -4,7 +4,7 @@ from typing import List
 import graphene
 from django.db import transaction
 
-from cask.accounts.models import Following, User
+from cask.accounts.models import Follower, User
 from cask.spirits.models import Bottle, FlavorProfile
 from cask.world.models import Location
 
@@ -16,7 +16,7 @@ class AddCheckIn(graphene.Mutation):
     class Arguments:
         bottle = graphene.UUID(required=True)
         notes = graphene.String(required=False)
-        rating = graphene.Decimal(required=False)
+        rating = graphene.Float(required=False)
         location = graphene.UUID(required=False)
         flavor_profile = graphene.List(graphene.UUID, required=False)
         friends = graphene.List(graphene.UUID, required=False)
@@ -45,7 +45,7 @@ class AddCheckIn(graphene.Mutation):
                 name=name,
                 bottle=Bottle.objects.get(id=bottle),
                 location=Location.objects.get(id=location) if location else None,
-                rating=rating,
+                rating=Decimal(str(rating)),
                 created_by=user,
             )
             if flavor_profile:
@@ -53,7 +53,7 @@ class AddCheckIn(graphene.Mutation):
                     checkin.flavor_profiles.add(FlavorProfile.objects.get(id=fp_id))
             if friends:
                 for f_id in friends:
-                    if not Following.objects.filter(
+                    if not Follower.objects.filter(
                         from_user=user, to_user_id=f_id
                     ).exists():
                         raise ValueError("Friendship not found for {}".format(f_id))
