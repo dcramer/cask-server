@@ -9,18 +9,12 @@ from .models import Follower, User
 
 
 class UserNode(DjangoObjectType):
-    full_name = graphene.String()
     email = graphene.String(required=False)
 
     class Meta:
         model = User
-        only_fields = ("id", "email", "first_name", "last_name")
+        only_fields = ("id", "email", "name")
         interfaces = (relay.Node,)
-
-    def resolve_full_name(self, info):
-        if self.first_name and self.last_name:
-            return "{} {}".format(self.first_name, self.last_name)
-        return self.first_name
 
     def resolve_email(self, info):
         user = info.context.user
@@ -50,12 +44,11 @@ class ViewerType(ObjectType):
 
 class FollowerFilter(django_filters.FilterSet):
     username = django_filters.CharFilter(lookup_expr="iexact")
-    first_name = django_filters.CharFilter(lookup_expr="iexact")
-    last_name = django_filters.CharFilter(lookup_expr="iexact")
+    name = django_filters.CharFilter(lookup_expr="iexact")
 
     class Meta:
         model = User
-        fields = ("id", "email", "first_name", "last_name")
+        fields = ("id", "email", "name")
 
     @property
     def qs(self):
@@ -73,12 +66,11 @@ class FollowerFilter(django_filters.FilterSet):
 
 class FollowingFilter(django_filters.FilterSet):
     username = django_filters.CharFilter(lookup_expr="iexact")
-    first_name = django_filters.CharFilter(lookup_expr="iexact")
-    last_name = django_filters.CharFilter(lookup_expr="iexact")
+    name = django_filters.CharFilter(lookup_expr="iexact")
 
     class Meta:
         model = User
-        fields = ("id", "email", "first_name", "last_name")
+        fields = ("id", "email", "name")
 
     @property
     def qs(self):
