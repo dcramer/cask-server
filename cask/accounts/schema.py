@@ -10,6 +10,7 @@ class UserNode(DjangoObjectType):
 
     class Meta:
         model = User
+        name = "User"
         only_fields = ("id", "email", "name")
 
     def resolve_email(self, info):

@@ -4,7 +4,7 @@ from django.db import IntegrityError
 
 from cask.world.models import Region
 
-from .models import Bottle, Brand, Distillery
+from .models import Bottle, Brand, Distillery, SpiritType
 from .schema import BottleNode, BrandNode, DistilleryNode
 
 
@@ -38,6 +38,7 @@ class AddBottle(graphene.Mutation):
             name=name,
             distillery=Distillery.objects.get(id=distillery),
             brand=Brand.objects.get(id=brand),
+            spirit_type=SpiritType.objects.get(id=spirit_type),
             abv=abv,
             age=age,
             created_by=info.context.user,

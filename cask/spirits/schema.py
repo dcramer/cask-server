@@ -8,21 +8,25 @@ from .models import Bottle, Brand, Distillery, SpiritType
 
 class BrandNode(DjangoObjectType):
     class Meta:
+        name = "Brand"
         model = Brand
 
 
 class DistilleryNode(DjangoObjectType):
     class Meta:
+        name = "Distillery"
         model = Distillery
 
 
 class BottleNode(DjangoObjectType):
     class Meta:
+        name = "Bottle"
         model = Bottle
 
 
 class SpiritTypeNode(DjangoObjectType):
     class Meta:
+        name = "SpiritType"
         model = SpiritType
 
 

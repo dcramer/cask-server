@@ -10,6 +10,7 @@ from .models import CheckIn
 class CheckInNode(DjangoObjectType):
     class Meta:
         model = CheckIn
+        name = "CheckIn"
 
 
 class Query(object):

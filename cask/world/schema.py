@@ -8,11 +8,13 @@ from .models import Country, Region
 class CountryNode(DjangoObjectType):
     class Meta:
         model = Country
+        name = "Country"
 
 
 class RegionNode(DjangoObjectType):
     class Meta:
         model = Region
+        name = "Region"
 
 
 class Query(object):
