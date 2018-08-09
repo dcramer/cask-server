@@ -1,5 +1,5 @@
-from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.models import AnonymousUser
+from django.utils.functional import SimpleLazyObject
 
 from cask.accounts.models import User
 

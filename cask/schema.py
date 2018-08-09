@@ -2,8 +2,8 @@ import graphene
 
 import cask.accounts.mutations
 import cask.accounts.schema
-import cask.cask.schema
 import cask.cask.mutations
+import cask.cask.schema
 import cask.spirits.mutations
 import cask.spirits.schema
 import cask.world.schema

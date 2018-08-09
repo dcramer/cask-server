@@ -16,7 +16,10 @@
     "[python]": {
         "editor.detectIndentation": false,
         "editor.tabSize": 4,
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
     },
 
     "python.linting.pylintEnabled": false,

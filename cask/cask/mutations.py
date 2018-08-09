@@ -1,8 +1,8 @@
-import graphene
-
 from decimal import Decimal
-from django.db import transaction
 from typing import List
+
+import graphene
+from django.db import transaction
 
 from cask.accounts.models import Following, User
 from cask.spirits.models import Bottle, FlavorProfile

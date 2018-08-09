@@ -1,8 +1,7 @@
 import logging
+
 import sentry_sdk
-
 from graphene_django.views import GraphQLView
-
 
 logger = logging.getLogger("cask")
 

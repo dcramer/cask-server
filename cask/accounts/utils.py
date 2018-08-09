@@ -1,10 +1,10 @@
 import logging
+from hashlib import sha1
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from itsdangerous import BadSignature, TimedJSONWebSignatureSerializer
-from hashlib import sha1
-from typing import Optional
 
 logger = logging.getLogger("cask")
 

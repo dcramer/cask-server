@@ -1,5 +1,4 @@
 import graphene
-
 from django.db import IntegrityError
 
 from cask.world.models import Region

@@ -1,12 +1,12 @@
+from typing import Optional
+
 import facebook
 import graphene
-
 from django.contrib.auth import authenticate
 from django.db import IntegrityError, transaction
 from graphql_relay.node.node import from_global_id
-from typing import Optional
 
-from .models import Identity, User, Follower
+from .models import Follower, Identity, User
 from .schema import UserNode
 from .utils import generate_token
 
