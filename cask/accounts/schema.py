@@ -19,21 +19,12 @@ class UserNode(DjangoObjectType):
         return None
 
 
-class ViewerType(graphene.ObjectType):
-    user = graphene.Field(UserNode)
-
-    def resolve_user(self, info, **kwargs):
-        if info.context.user.is_authenticated:
-            return info.context.user
-        return None
-
-
 class Query(object):
-    viewer = graphene.Field(ViewerType)
+    me = graphene.Field(UserNode)
     followers = graphene.List(UserNode)
     following = graphene.List(UserNode)
 
-    def resolve_viewer(self, info, **kwargs):
+    def resolve_me(self, info, **kwargs):
         if info.context.user.is_authenticated:
             return info.context.user
         return None
