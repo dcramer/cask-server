@@ -49,6 +49,7 @@ class Follower(models.Model):
 
 
 class Identity(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     provider = models.CharField(max_length=32)
     external_id = models.CharField(max_length=32)
@@ -58,6 +59,7 @@ class Identity(models.Model):
 
 
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     username = None
     first_name = None
     last_name = None

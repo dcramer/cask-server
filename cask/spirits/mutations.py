@@ -1,7 +1,6 @@
 import graphene
 
 from django.db import IntegrityError
-from graphql_relay.node.node import from_global_id
 
 from cask.world.models import Region
 
@@ -12,9 +11,9 @@ from .schema import BottleNode, BrandNode, DistilleryNode
 class AddBottle(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        brand = graphene.ID(required=True)
-        distillery = graphene.ID(required=True)
-        spirit_type = graphene.ID(required=False)
+        brand = graphene.String(required=True)
+        distillery = graphene.String(required=True)
+        spirit_type = graphene.String(required=False)
         abv = graphene.Float(required=False)
         age = graphene.Int(required=False)
 
@@ -68,7 +67,7 @@ class AddBrand(graphene.Mutation):
 class AddDistillery(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        region = graphene.ID(required=True)
+        region = graphene.String(required=True)
 
     ok = graphene.Boolean()
     errors = graphene.List(graphene.String)
@@ -78,7 +77,7 @@ class AddDistillery(graphene.Mutation):
         if not info.context.user.is_authenticated:
             return AddDistillery(ok=False, errors=["Authentication required"])
 
-        region = Region.objects.get(id=from_global_id(region)[1])
+        region = Region.objects.get(id=region)
 
         try:
             result = Distillery.objects.create(

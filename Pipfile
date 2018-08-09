@@ -10,12 +10,11 @@ pre-commit = "*"
 
 [packages]
 django = "*"
-django-filter = "==2.0.0"
-"graphene-django" = {file = "https://github.com/graphql-python/graphene-django/archive/be1b96bd43e4bbe0fd026ca48b7701ea1c7ffc96.zip"}
 "psycopg2-binary" = "*"
 itsdangerous = "*"
 facebook-sdk = "*"
 sentry-sdk = "*"
+graphene-django = "*"
 
 [requires]
 python_version = "3.7"

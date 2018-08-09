@@ -18,6 +18,7 @@ def get_user(header):
     try:
         user = User.objects.get(id=payload["uid"])
     except (TypeError, KeyError, User.DoesNotExist):
+        print("cant find user")
         return AnonymousUser()
 
     if security_hash(user) != payload["sh"]:

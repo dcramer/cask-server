@@ -1,13 +1,17 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from itsdangerous import BadSignature, TimedJSONWebSignatureSerializer
 from hashlib import sha1
 from typing import Optional
 
+logger = logging.getLogger("cask")
 
-def generate_token(user: User) -> str:
+
+def generate_token(user: User, expires_in: int = 3600 * 24 * 30) -> str:
     s = TimedJSONWebSignatureSerializer(
-        settings.SECRET_KEY, expires_in=3600 * 24 * 30, salt="auth"
+        settings.SECRET_KEY, expires_in=expires_in, salt="auth"
     )
     payload = {"uid": str(user.id), "sh": security_hash(user)}
     return s.dumps(payload).decode("utf-8")
@@ -18,10 +22,13 @@ def parse_token(token: str) -> Optional[str]:
     try:
         payload = s.loads(token)
     except BadSignature:
+        logger.warning("auth: bad signature")
         return None
     if "uid" not in payload:
+        logger.warning("auth: missing uid")
         return None
     if "sh" not in payload:
+        logger.warning("auth: missing security hash")
         return None
     return payload
 

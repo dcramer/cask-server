@@ -1,5 +1,5 @@
-from graphene import relay
-from graphene_django.filter import DjangoFilterConnectionField
+import graphene
+
 from graphene_django.types import DjangoObjectType
 
 from .models import Country, Region
@@ -8,25 +8,27 @@ from .models import Country, Region
 class CountryNode(DjangoObjectType):
     class Meta:
         model = Country
-        filter_fields = {
-            "id": ["exact"],
-            "name": ["iexact", "icontains", "istartswith"],
-        }
-        interfaces = (relay.Node,)
 
 
 class RegionNode(DjangoObjectType):
     class Meta:
         model = Region
-        filter_fields = {
-            "id": ["exact"],
-            "name": ["iexact", "icontains", "istartswith"],
-        }
-        interfaces = (relay.Node,)
 
 
 class Query(object):
-    country = relay.Node.Field(CountryNode)
-    countries = DjangoFilterConnectionField(CountryNode)
-    region = relay.Node.Field(RegionNode)
-    regions = DjangoFilterConnectionField(RegionNode)
+    countries = graphene.List(CountryNode, query=graphene.String())
+    regions = graphene.List(RegionNode, query=graphene.String())
+
+    def resolve_countries(self, info, query: str = None):
+        qs = Country.objects.all()
+        if query:
+            qs = qs.filter(name__istartswith=query)
+        return qs
+
+    def resolve_regions(self, info, country: str = None, query: str = None):
+        qs = Region.objects.all()
+        if country:
+            qs = qs.filter(country=country)
+        if query:
+            qs = qs.filter(name__istartswith=query)
+        return qs
