@@ -15,7 +15,7 @@ def get_user_from_facebook_token(token: str = None) -> Optional[User]:
     graph = facebook.GraphAPI(access_token=token)
 
     try:
-        profile = graph.get_object("me")
+        profile = graph.get_object("me", fields="id,name,email")
     except facebook.GraphAPIError as e:
         if "Invalid OAuth access token" in str(e):
             return None
