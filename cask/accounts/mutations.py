@@ -1,8 +1,8 @@
+import facebook
 import graphene
 
 from django.contrib.auth import authenticate
 from django.db import IntegrityError, transaction
-from facebook import GraphAPI
 from graphql_relay.node.node import from_global_id
 from typing import Optional
 
@@ -12,8 +12,14 @@ from .utils import generate_token
 
 
 def get_user_from_facebook_token(token: str = None) -> Optional[User]:
-    graph = GraphAPI(access_token=token)
-    profile = graph.get_object("me")
+    graph = facebook.GraphAPI(access_token=token)
+
+    try:
+        profile = graph.get_object("me")
+    except facebook.GraphAPIError as e:
+        if "Invalid OAuth access token" in str(e):
+            return None
+        raise
 
     external_id = str(profile["id"])
     for i in range(2):
@@ -58,6 +64,8 @@ class Login(graphene.Mutation):
             user = get_user_from_facebook_token(facebook_token)
         elif email and password:
             user = authenticate(email=email, password=password)
+        else:
+            user = None
 
         if not user:
             return Login(
