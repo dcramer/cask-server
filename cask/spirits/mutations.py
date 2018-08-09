@@ -11,9 +11,9 @@ from .schema import BottleNode, BrandNode, DistilleryNode
 class AddBottle(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        brand = graphene.String(required=True)
-        distillery = graphene.String(required=True)
-        spirit_type = graphene.String(required=False)
+        brand = graphene.UUID(required=True)
+        distillery = graphene.UUID(required=True)
+        spirit_type = graphene.UUID(required=False)
         abv = graphene.Float(required=False)
         age = graphene.Int(required=False)
 
@@ -67,7 +67,7 @@ class AddBrand(graphene.Mutation):
 class AddDistillery(graphene.Mutation):
     class Arguments:
         name = graphene.String(required=True)
-        region = graphene.String(required=True)
+        region = graphene.UUID(required=True)
 
     ok = graphene.Boolean()
     errors = graphene.List(graphene.String)

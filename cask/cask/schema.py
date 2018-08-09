@@ -15,9 +15,9 @@ class CheckInNode(DjangoObjectType):
 class Query(object):
     checkins = graphene.List(
         CheckInNode,
-        id=graphene.String(),
+        id=graphene.UUID(),
         scope=graphene.String(),
-        created_by=graphene.String(),
+        created_by=graphene.UUID(),
     )
 
     def resolve_checkins(
