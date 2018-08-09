@@ -36,8 +36,8 @@ class AddBottle(graphene.Mutation):
 
         bottle = Bottle.objects.create(
             name=name,
-            distillery=distillery,
-            brand=brand,
+            distillery=Distillery.objects.get(id=distillery),
+            brand=Brand.objects.get(id=brand),
             abv=abv,
             age=age,
             created_by=info.context.user,

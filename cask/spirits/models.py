@@ -62,7 +62,7 @@ class Bottle(models.Model):
     age = models.PositiveSmallIntegerField(null=True)
     distillation_date = models.DateTimeField(null=True)
     bottle_date = models.DateTimeField(null=True)
-    abv = models.DecimalField(decimal_places=2, max_digits=5)
+    abv = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
