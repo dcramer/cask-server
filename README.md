@@ -3,10 +3,14 @@
 
 ## Install
 
-- pipenv sync
-- createdb -E utf-8 cask
-- pipenv run python manage.py migrate
-- pipenv run python manage.py runserver
+```shell
+$ brew install postgresql postgis
+$ pipenv sync
+$ psql -c 'create extension postgis;' -U postgres
+$ createdb -E utf-8 cask
+$ pipenv run python manage.py migrate
+$ pipenv run python manage.py runserver
+```
 
 ## API
 
@@ -16,7 +20,7 @@ Authentication is done via the following:
 
 1. Perform a login mutation:
 
-```
+```graphql
 mutation{
   login(email:"foo@example.com", password:"bar"){
     errors
@@ -29,7 +33,7 @@ mutation{
 
 2. Capture the token in the response and send it with future requests:
 
-```
+```http
 Authorization: Token {value}
 ```
 
