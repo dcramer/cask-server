@@ -80,4 +80,5 @@ class EnhancedGraphQLView(GraphQLView):
             if isinstance(error, GraphQLSyntaxError):
                 return format_graphql_error(error)
         except Exception as e:
+            sentry_sdk.capture_exception(e)
             return format_internal_error(e)
