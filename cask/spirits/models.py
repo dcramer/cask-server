@@ -55,7 +55,7 @@ class SpiritType(models.Model):
 
 class Bottle(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, unique=True)
     distillery = models.ForeignKey(Distillery, on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     spirit_type = models.ForeignKey(SpiritType, on_delete=models.CASCADE)
