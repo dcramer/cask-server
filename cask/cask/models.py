@@ -8,6 +8,7 @@ class CheckIn(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     bottle = models.ForeignKey("spirits.Bottle", on_delete=models.CASCADE)
     location = models.ForeignKey("world.Location", null=True, on_delete=models.CASCADE)
+    rating = models.DecimalField(decimal_places=2, max_digits=5, null=True)
     notes = models.TextField(null=True)
     flavor_profiles = models.ManyToManyField("spirits.FlavorProfile")
     friends = models.ManyToManyField(

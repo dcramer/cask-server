@@ -1,7 +1,13 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 
-from .models import Country, Region
+from .models import Country, Location, Region
+
+
+class LocationNode(DjangoObjectType):
+    class Meta:
+        model = Location
+        name = "Location"
 
 
 class CountryNode(DjangoObjectType):

@@ -3,6 +3,7 @@ from typing import List
 
 import graphene
 from django.db import transaction
+from graphql.language.ast import FloatValue, IntValue
 
 from cask.accounts.models import Follower, User
 from cask.spirits.models import Bottle, FlavorProfile
@@ -12,11 +13,29 @@ from .models import CheckIn
 from .schema import CheckInNode
 
 
+class DecimalField(graphene.Scalar):
+    class Meta:
+        name = "Decimal"
+
+    @staticmethod
+    def coerce_decimal(value):
+        return Decimal(str(value))
+
+    serialize = coerce_decimal
+    parse_value = coerce_decimal
+
+    @staticmethod
+    def parse_literal(ast):
+        if isinstance(ast, IntValue) or isinstance(ast, FloatValue):
+            num = Decimal(str(ast.value))
+            return num
+
+
 class AddCheckIn(graphene.Mutation):
     class Arguments:
         bottle = graphene.UUID(required=True)
         notes = graphene.String(required=False)
-        rating = graphene.Float(required=False)
+        rating = DecimalField(required=False)
         location = graphene.UUID(required=False)
         flavor_profile = graphene.List(graphene.UUID, required=False)
         friends = graphene.List(graphene.UUID, required=False)
@@ -42,8 +61,8 @@ class AddCheckIn(graphene.Mutation):
 
         with transaction.atomic():
             checkin = CheckIn.objects.create(
-                name=name,
                 bottle=Bottle.objects.get(id=bottle),
+                notes=notes,
                 location=Location.objects.get(id=location) if location else None,
                 rating=Decimal(str(rating)),
                 created_by=user,
