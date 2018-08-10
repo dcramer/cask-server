@@ -4,8 +4,19 @@ from graphene_django.types import DjangoObjectType
 from .models import Follower, User
 
 
+class UserScope(graphene.Enum):
+    class Meta:
+        name = "Scope"
+
+    followers = "followers"
+    following = "following"
+
+
+# TODO(dcramer): how do we return following/follower status efficiently here?
 class UserNode(DjangoObjectType):
     email = graphene.String(required=False)
+    following = graphene.Boolean()
+    follower = graphene.Boolean()
 
     class Meta:
         model = User
@@ -21,36 +32,49 @@ class UserNode(DjangoObjectType):
 
 class Query(object):
     me = graphene.Field(UserNode)
-    followers = graphene.List(UserNode)
-    following = graphene.List(UserNode)
+    users = graphene.List(
+        UserNode,
+        id=graphene.UUID(),
+        query=graphene.String(),
+        scope=graphene.Argument(UserScope),
+    )
 
     def resolve_me(self, info, **kwargs):
         if info.context.user.is_authenticated:
             return info.context.user
         return None
 
-    def resolve_followers(self, info, **kwargs):
-        user = self.request.user
+    def resolve_users(
+        self, info, id: str = None, query: str = None, scope: str = None, **kwargs
+    ):
+        user = info.context.user
         qs = Follower.objects.all()
-        if not user.is_authenticated:
-            qs = qs.none()
-        else:
-            qs = qs.filter(
-                id__in=Follower.objects.filter(to_user_id=user.id).values_list(
-                    "from_user_id"
-                )
-            )
-        return qs
 
-    def resolve_following(self, info, **kwargs):
-        user = self.request.user
-        qs = Follower.objects.all()
-        if not user.is_authenticated:
-            qs = qs.none()
-        else:
-            qs = qs.filter(
-                id__in=Follower.objects.filter(from_user_id=user.id).values_list(
-                    "to_user_id"
+        if id:
+            qs = qs.filter(from_user_id=id)
+
+        if query:
+            qs = qs.filter(name__istartswith=query)
+
+        if scope == "followers":
+            if not user.is_authenticated:
+                qs = qs.none()
+            else:
+                qs = qs.filter(
+                    id__in=Follower.objects.filter(to_user_id=user.id).values_list(
+                        "from_user_id"
+                    )
                 )
-            )
+        elif scope == "following":
+            if not user.is_authenticated:
+                qs = qs.none()
+            else:
+                qs = qs.filter(
+                    id__in=Follower.objects.filter(from_user_id=user.id).values_list(
+                        "to_user_id"
+                    )
+                )
+        elif scope:
+            qs = qs.none()
+
         return qs

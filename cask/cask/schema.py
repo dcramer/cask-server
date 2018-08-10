@@ -42,4 +42,4 @@ class Query(object):
 
         if created_by:
             qs = qs.filter(created_by=created_by)
-        return qs
+        return qs.order_by("-created_at")

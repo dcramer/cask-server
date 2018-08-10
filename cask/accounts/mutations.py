@@ -4,7 +4,6 @@ import facebook
 import graphene
 from django.contrib.auth import authenticate
 from django.db import IntegrityError, transaction
-from graphql_relay.node.node import from_global_id
 
 from .models import Follower, Identity, User
 from .schema import UserNode
@@ -82,7 +81,7 @@ class Follow(graphene.Mutation):
     """
 
     class Arguments:
-        user = graphene.String(required=True)
+        user = graphene.UUID(required=True)
 
     ok = graphene.Boolean()
     errors = graphene.List(graphene.String)
@@ -94,9 +93,7 @@ class Follow(graphene.Mutation):
         if not current_user.is_authenticated:
             return Follow(ok=False, errors=["Requires authentication"])
 
-        user = User.objects.exclude(id=info.context.user.id).get(
-            id=from_global_id(user)[1]
-        )
+        user = User.objects.exclude(id=info.context.user.id).get(id=user)
         Follower.objects.create(from_user=current_user, to_user=user)
         return Follow(ok=True, user=user)
 
@@ -107,7 +104,7 @@ class Unfollow(graphene.Mutation):
     """
 
     class Arguments:
-        user = graphene.String(required=True)
+        user = graphene.UUID(required=True)
 
     ok = graphene.Boolean()
     errors = graphene.List(graphene.String)
@@ -119,9 +116,7 @@ class Unfollow(graphene.Mutation):
         if not current_user.is_authenticated:
             return Follow(ok=False, errors=["Requires authentication"])
 
-        user = User.objects.exclude(id=info.context.user.id).get(
-            id=from_global_id(user)[1]
-        )
+        user = User.objects.exclude(id=info.context.user.id).get(id=user)
         Follower.objects.filter(from_user=current_user, to_user=user).delete()
         return Unfollow(ok=True, user=user)
 
