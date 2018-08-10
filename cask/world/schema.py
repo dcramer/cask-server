@@ -1,6 +1,8 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 
+from cask.utils import optimize_queryset
+
 from .models import Country, Location, Region
 
 
@@ -34,7 +36,8 @@ class Query(object):
             qs = qs.filter(id=id)
         if query:
             qs = qs.filter(name__istartswith=query)
-        return qs
+        qs = optimize_queryset(qs, info, "countries")
+        return qs.order_by("name")
 
     def resolve_regions(
         self, info, id: str = None, country: str = None, query: str = None
@@ -46,4 +49,5 @@ class Query(object):
             qs = qs.filter(country=country)
         if query:
             qs = qs.filter(name__istartswith=query)
-        return qs
+        qs = optimize_queryset(qs, info, "countries")
+        return qs.order_by("regions")

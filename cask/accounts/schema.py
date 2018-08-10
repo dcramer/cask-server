@@ -1,6 +1,8 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 
+from cask.utils import optimize_queryset
+
 from .models import Follower, User
 
 
@@ -76,5 +78,7 @@ class Query(object):
                 )
         elif scope:
             qs = qs.none()
+
+        qs = optimize_queryset(qs, info, "users")
 
         return qs

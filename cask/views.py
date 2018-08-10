@@ -10,6 +10,7 @@ class EnhancedGraphQLView(GraphQLView):
     # https://github.com/graphql-python/graphene-django/issues/124
     def execute_graphql_request(self, *args, **kwargs):
         """Extract any exceptions and send them to Sentry"""
+
         result = super().execute_graphql_request(*args, **kwargs)
         if result.errors:
             for error in result.errors:

@@ -2,6 +2,7 @@ import graphene
 from graphene_django.types import DjangoObjectType
 
 from cask.accounts.models import Follower
+from cask.utils import optimize_queryset
 
 from .models import CheckIn
 
@@ -42,4 +43,9 @@ class Query(object):
 
         if created_by:
             qs = qs.filter(created_by=created_by)
-        return qs.order_by("-created_at")
+
+        qs = qs.order_by("-created_at")
+
+        qs = optimize_queryset(qs, info, "checkins")
+
+        return qs
