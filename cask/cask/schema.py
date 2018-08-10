@@ -7,6 +7,14 @@ from cask.utils import optimize_queryset
 from .models import CheckIn
 
 
+class CheckInScope(graphene.Enum):
+    class Meta:
+        name = "CheckInScope"
+
+    public = "public"
+    friends = "friends"
+
+
 class CheckInNode(DjangoObjectType):
     class Meta:
         model = CheckIn
@@ -17,7 +25,7 @@ class Query(object):
     checkins = graphene.List(
         CheckInNode,
         id=graphene.UUID(),
-        scope=graphene.String(),
+        scope=graphene.Argument(CheckInScope),
         created_by=graphene.UUID(),
     )
 

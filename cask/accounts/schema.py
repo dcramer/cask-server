@@ -8,7 +8,7 @@ from .models import Follower, User
 
 class UserScope(graphene.Enum):
     class Meta:
-        name = "Scope"
+        name = "UserScope"
 
     followers = "followers"
     following = "following"
