@@ -48,7 +48,7 @@ class Query(object):
         self, info, id: str = None, query: str = None, scope: str = None, **kwargs
     ):
         user = info.context.user
-        qs = Follower.objects.all()
+        qs = User.objects.all()
 
         if id:
             qs = qs.filter(from_user_id=id)
