@@ -8,6 +8,9 @@ isort = "==4.3.4"
 black = "==18.6b4"
 "flake8" = "*"
 pre-commit = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-xdist = "*"
 
 [packages]
 django = "*"
@@ -16,6 +19,7 @@ itsdangerous = "*"
 facebook-sdk = "*"
 sentry-sdk = "*"
 graphene-django = "*"
+nplusone = "*"
 
 [requires]
 python_version = "3.7"
