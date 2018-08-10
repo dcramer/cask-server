@@ -6,28 +6,25 @@ from graphene.utils.str_converters import to_camel_case
 def get_selected_names(info):
     """
     Parses a query info into a list of composite field names.
+
     For example the following query:
+
         {
           carts {
-            edges {
-              node {
-                id
-                name
-                ...cartInfo
-              }
+            id
+            name
+            ...cartInfo
             }
-          }
         }
         fragment cartInfo on CartType { whatever }
 
     Will result in an array:
+
         [
             'carts',
-            'carts.edges',
-            'carts.edges.node',
-            'carts.edges.node.id',
-            'carts.edges.node.name',
-            'carts.edges.node.whatever'
+            'carts.id',
+            'carts.name',
+            'carts.whatever'
         ]
     """
     from graphql.language.ast import FragmentSpread
@@ -58,6 +55,31 @@ def get_selected_names(info):
 
 
 def optimize_queryset(qs, info, root):
+    """
+    Pulls in available database relations to avoid N+1 queries.
+
+    For example the following query:
+
+        {
+          carts {
+            id
+            name
+            ...cartInfo
+            }
+        }
+        fragment cartInfo on CartType {
+            store {
+                id
+                name
+            }
+        }
+
+    It will automatically pull in the 'store' relation (assuming its a ForeignKey
+    or ManyToMany) using the ORM.
+
+    >>> qs = Cart.objects.all()
+    >>> optimize_queryset(qs, info, 'carts')
+    """
     # right now we're only handling one level deep
     root_len = len(to_camel_case(root)) + 1
     selected_fields = set(
