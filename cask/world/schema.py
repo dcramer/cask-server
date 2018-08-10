@@ -26,6 +26,7 @@ class RegionNode(DjangoObjectType):
 
 class Query(object):
     countries = graphene.List(CountryNode, id=graphene.UUID(), query=graphene.String())
+    locations = graphene.List(LocationNode, id=graphene.UUID(), query=graphene.String())
     regions = graphene.List(
         RegionNode, id=graphene.UUID(), query=graphene.String(), country=graphene.UUID()
     )
@@ -37,6 +38,15 @@ class Query(object):
         if query:
             qs = qs.filter(name__istartswith=query)
         qs = optimize_queryset(qs, info, "countries")
+        return qs.order_by("name")
+
+    def resolve_locations(self, info, id: str = None, query: str = None):
+        qs = Location.objects.all()
+        if id:
+            qs = qs.filter(id=id)
+        if query:
+            qs = qs.filter(name__istartswith=query)
+        qs = optimize_queryset(qs, info, "locations")
         return qs.order_by("name")
 
     def resolve_regions(
