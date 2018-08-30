@@ -12,7 +12,7 @@ class EnhancedGraphQLView(GraphQLView):
         """Extract any exceptions and send them to Sentry"""
 
         result = super().execute_graphql_request(*args, **kwargs)
-        if result.errors:
+        if result and result.errors:
             for error in result.errors:
                 if hasattr(error, "original_error"):
                     try:
